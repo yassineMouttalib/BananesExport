@@ -1,16 +1,17 @@
 package com.BananesExport.OrderManager.service;
 
+import com.BananesExport.OrderManager.commun.Constants;
 import com.BananesExport.OrderManager.model.OrderEntity;
-import com.BananesExport.OrderManager.model.ReceiverEntity;
 import com.BananesExport.OrderManager.repository.OrderRepository;
-import com.BananesExport.OrderManager.repository.ReceiverRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import java.util.*;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -18,16 +19,26 @@ public class OrderService {
     OrderRepository orderRepository;
 
     public List<OrderEntity> getAllOrders(String receiver_id) {
-       List<OrderEntity> orderEntityEntities =orderRepository.findByReceiver_id(receiver_id);
-        return orderEntityEntities;
+        return orderRepository.findByReceiver_id(receiver_id);
     }
-    public OrderEntity addOrder(OrderEntity orderEntity) {
+    public OrderEntity addOrder(OrderEntity orderEntity) throws Exception {
         if (orderEntity.getOrder_id() != null){
             Optional<OrderEntity> orderEntityDBOpt = orderRepository.findById(orderEntity.getOrder_id());
             if (orderEntityDBOpt.isPresent()) {
                 throw new EntityExistsException("Order already existe");
             }
         }
+        LocalDateTime todayDate = LocalDateTime.now();
+        Date date = new Date(System.currentTimeMillis()+ (1000 * 60 * 60 * 24*7));
+        System.out.println(date);
+        if (orderEntity.getDelivery_date().before(date)){
+            throw new DateTimeException("Delivery date is less than 1 week");
+        }
+        if (orderEntity.getQuantity() < 0|| orderEntity.getQuantity() > Constants.MAX_BANANAS_QUANTITY ||
+                orderEntity.getQuantity() % 25!= 0) {
+            throw new Exception(Constants.INVALIDE_BANANAS_QUANTITY_MESSAGE);
+        }
+        orderEntity.setPrice(orderEntity.getQuantity() * Constants.BANANAS_PRICE_KG);
 
         return orderRepository.save(orderEntity);
     }

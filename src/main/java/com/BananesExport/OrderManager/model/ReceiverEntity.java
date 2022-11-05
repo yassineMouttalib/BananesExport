@@ -15,9 +15,14 @@ public class ReceiverEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "receiver_id", nullable = false)
     private Long receiver_id;
+    @Column(nullable = false)
     private String nom;
+    @Column(nullable = false)
     private String adresse;
+    @Column(nullable = false)
     private String code_postal;
+    @Column(nullable = false)
     private String ville;
+    @Column(nullable = false)
     private String pays;
 }

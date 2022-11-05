@@ -48,26 +48,4 @@ class ReceiverServiceTest {
         assertEquals(receiver_id, receiverService.getReceiverById(receiver_id).getReceiver_id());
     }
 
-    @Test
-    void saveOrUpdateReceiver() {
-        ReceiverEntity receiver = receiverEntities.get(0);
-        assertNotNull(receiver);
-        when(receiverRepository.findById(receiver.getReceiver_id())).thenReturn(Optional.of(receiver));
-        Optional<ReceiverEntity> tmp = receiverRepository.findById(receiver.getReceiver_id());
-        assertTrue(tmp.isPresent());
-        ReceiverEntity receiverupdated = receiverEntities.get(1);
-//        receiverupdated.setReceiver_id(receiverEntities.get(0).getReceiver_id());
-//        when(receiverRepository.save(receiverupdated)).thenReturn(Optional.of(receiverupdated).get());
-        assertNotNull(receiverupdated);
-        receiverService.updateReceiver(receiverupdated);
-        verify(receiverRepository).save(receiverupdated);
-    }
-
-    @Test
-    void testSaveOrUpdateReceiver() {
-    }
-
-    @Test
-    void deleteReceiver() {
-    }
 }
